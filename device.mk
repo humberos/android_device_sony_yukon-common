@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SONY_ROOT:=device/sony/yukon-common/rootdir
+
 SOMC_PLATFORM := yukon
 
 DEVICE_PACKAGE_OVERLAYS += \
     device/sony/yukon-common/overlay
-
-SONY_ROOT:=device/sony/yukon-common/rootdir
 
 PRODUCT_COPY_FILES += \
     $(SONY_ROOT)/ueventd.yukon.rc:root/ueventd.yukon.rc \
@@ -29,6 +29,7 @@ PRODUCT_COPY_FILES += \
     $(SONY_ROOT)/system/etc/wifi/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
     $(SONY_ROOT)/system/etc/init.yukon.bt.sh:system/etc/init.yukon.bt.sh \
     $(SONY_ROOT)/system/etc/sec_config:system/etc/sec_config \
+    $(SONY_ROOT)/system/etc/sensors_settings:system/etc/sensors_settings \
     $(SONY_ROOT)/system/etc/gps.conf:system/etc/gps.conf
  
 # Copy extra files
@@ -51,7 +52,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:system/etc/permissions/android.hardware.sensor.stepdetector.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
-    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
+    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+    frameworks/native/data/etc/android.software.midi.xml:system/etc/permissions/android.software.midi.xml
 
 PRODUCT_COPY_FILES += \
     $(SONY_ROOT)/system/etc/audio_effects.conf:system/vendor/etc/audio_effects.conf \
@@ -69,7 +71,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml \
     frameworks/native/data/etc/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml
 
-#Audio
+# Audio
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.primary.msm8226 \
@@ -82,7 +84,7 @@ PRODUCT_PACKAGES += \
     libaudioalsa \
     libdiag
 
-# for audio.primary.msm8226
+# For audio.primary.msm8226
 PRODUCT_PACKAGES += \
     libtinyalsa \
     libtinycompress \
@@ -96,7 +98,7 @@ PRODUCT_PACKAGES += \
     libqcomvoiceprocessingdescriptors \
     libqcompostprocbundle
 
-#GFX
+# GFX
 PRODUCT_PACKAGES += \
     gralloc.msm8226 \
     hwcomposer.msm8226 \
@@ -107,10 +109,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libion
 
-PRODUCT_PACKAGES += \
-    libstlport
-
-#OMX
+# OMX
 PRODUCT_PACKAGES += \
     libc2dcolorconvert \
     libstagefrighthw \
@@ -120,27 +119,26 @@ PRODUCT_PACKAGES += \
     libOmxVdecHevc \
     libOmxVenc
 
-#lights
+# Lights
 PRODUCT_PACKAGES += \
     lights.yukon
 
-# NFC packages
+# NFC
 PRODUCT_PACKAGES += \
     com.android.nfc_extras \
     NfcNci \
     Tag \
-    nfc_nci.pn54x.default
+    nfc_nci.msm8226
 
-#GPS
+# GPS
 PRODUCT_PACKAGES += \
     libloc_api_v02 \
-    libloc_adapter \
     libloc_core \
     libloc_eng \
     libgps.utils \
     gps.msm8226
 
-#Wifi
+# WLAN
 PRODUCT_PACKAGES += \
     dhcpcd.conf \
     hostapd \
@@ -148,26 +146,32 @@ PRODUCT_PACKAGES += \
     wpa_supplicant \
     wpa_supplicant.conf
 
-#Misc
+# CAMERA
+PRODUCT_PACKAGES += \
+    libmmcamera_interface \
+    libmmjpeg_interface \
+    libqomx_core \
+    camera.msm8226
+
+# Misc
 PRODUCT_PACKAGES += \
     libmiscta \
     libta \
     tad_static \
-    rmt_storage \
     ta_qmi_service \
     ta2bin
 
-PRODUCT_PACKAGES += \
-    rmt_storage
-
-#OSS
+# OSS
 PRODUCT_PACKAGES += \
     timekeep \
     TimeKeep \
     thermanager \
-    addrsetup
+    macaddrsetup
 
-#Charger
+PRODUCT_PACKAGES += \
+    rmt_storage
+
+# Charger
 PRODUCT_PACKAGES += \
     charger_res_images
 
@@ -186,11 +190,16 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     e2fsck
 
-# Get the long list of apns
-PRODUCT_COPY_FILES += device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
+# BoringSSL hacks
+PRODUCT_PACKAGES += \
+    libboringssl-compat
 
-# Platform specific properties
-#
+# APN list
+PRODUCT_COPY_FILES += \
+    device/sample/etc/old-apns-conf.xml:system/etc/old-apns-conf.xml \
+    device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
+
+# Bluetooth
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.qualcomm.bt.hci_transport=smd
 
@@ -206,7 +215,6 @@ PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := \
 $(call add-product-dex-preopt-module-config,services,--compiler-filter=speed)
 
 # Platform specific default properties
-#
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp \
     persist.data.qmi.adb_logmask=0
