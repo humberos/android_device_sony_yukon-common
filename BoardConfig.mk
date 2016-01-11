@@ -12,16 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PRODUCT_VENDOR_KERNEL_HEADERS := device/sony/yukon/kernel-headers
+TARGET_KERNEL_SOURCE =: kernel/sony/msm
 
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_BOARD_PLATFORM := msm8226
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
-TARGET_CPU_VARIANT := krait
-TARGET_GLOBAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mfpu=neon -mfloat-abi=softfp
+TARGET_CPU_VARIANT := cortex-a7
 
 TARGET_NO_RADIOIMAGE := true
 TARGET_NO_BOOTLOADER := true
@@ -72,8 +70,9 @@ BOARD_USES_ALSA_AUDIO := true
 AUDIO_FEATURE_ENABLED_MULTI_VOICE_SESSIONS := true
 
 # Camera
-USE_DEVICE_SPECIFIC_CAMERA := true
+TARGET_USES_AOSP := true
 BOARD_QTI_CAMERA_32BIT_ONLY := true
+BOARD_QTI_CAMERA_V2 := true
 
 # Wi-Fi definitions for Qualcomm solution
 BOARD_HAS_QCOM_WLAN := true
@@ -104,6 +103,9 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 
 TARGET_SYSTEM_PROP := device/sony/yukon-common/system.prop
 
+# NFC
+NFC_NXP_CHIP_TYPE := PN547C2
+
 # Include an expanded selection of fonts
 EXTENDED_FONT_FOOTPRINT := true
 
@@ -113,4 +115,11 @@ ifeq ($(HOST_OS),linux)
 endif
 
 BUILD_KERNEL := true
--include vendor/sony/kernel/KernelConfig.mk
+
+# Include build helpers for QCOM proprietary
+-include vendor/qcom/proprietary/common/build/proprietary-build.mk
+
+# SELinux
+include device/qcom/aosp-sepolicy/sepolicy.mk
+
+BOARD_SEPOLICY_DIRS += device/sony/yukon-common/sepolicy

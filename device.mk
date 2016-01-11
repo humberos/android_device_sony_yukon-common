@@ -38,6 +38,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
     frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
+    frameworks/native/data/etc/android.hardware.camera.full.xml:system/etc/permissions/android.hardware.camera.full.xml \
+    frameworks/native/data/etc/android.hardware.camera.raw.xml:system/etc/permissions/android.hardware.camera.raw.xml \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
@@ -59,6 +61,7 @@ PRODUCT_COPY_FILES += \
     $(SONY_ROOT)/system/etc/audio_effects.conf:system/vendor/etc/audio_effects.conf \
     $(SONY_ROOT)/system/etc/audio_policy.conf:system/etc/audio_policy.conf \
     $(SONY_ROOT)/system/etc/media_codecs.xml:system/etc/media_codecs.xml \
+    $(SONY_ROOT)/system/etc/media_codecs_performance.xml:system/etc/media_codecs_performance.xml \
     $(SONY_ROOT)/system/etc/media_profiles.xml:system/etc/media_profiles.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
@@ -77,12 +80,7 @@ PRODUCT_PACKAGES += \
     audio.primary.msm8226 \
     audio.r_submix.default \
     audio.usb.default \
-    libaudio-resampler \
-    libacdbloader \
-    libacdbmapper \
-    libaudcal \
-    libaudioalsa \
-    libdiag
+    libaudio-resampler
 
 # For audio.primary.msm8226
 PRODUCT_PACKAGES += \
@@ -153,14 +151,6 @@ PRODUCT_PACKAGES += \
     libqomx_core \
     camera.msm8226
 
-# Misc
-PRODUCT_PACKAGES += \
-    libmiscta \
-    libta \
-    tad_static \
-    ta_qmi_service \
-    ta2bin
-
 # OSS
 PRODUCT_PACKAGES += \
     timekeep \
@@ -168,16 +158,15 @@ PRODUCT_PACKAGES += \
     thermanager \
     macaddrsetup
 
-PRODUCT_PACKAGES += \
-    rmt_storage
-
 # Charger
 PRODUCT_PACKAGES += \
     charger_res_images
 
+# AOSP Packages
 PRODUCT_PACKAGES += \
     InCallUI \
-    Launcher3
+    Launcher3 \
+    messaging
 
 PRODUCT_PACKAGES += \
     libemoji
@@ -185,6 +174,10 @@ PRODUCT_PACKAGES += \
 # BoringSSL hacks
 PRODUCT_PACKAGES += \
     libboringssl-compat
+
+# Simple PowerHAL
+PRODUCT_PACKAGES += \
+    power.yukon
 
 # APN list
 PRODUCT_COPY_FILES += \
@@ -209,5 +202,10 @@ $(call add-product-dex-preopt-module-config,services,--compiler-filter=speed)
 
 # Platform specific default properties
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp \
     persist.data.qmi.adb_logmask=0
+
+# Enable MultiWindow
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.debug.multi_window=true
+
+$(call inherit-product, vendor/sony/version/version.mk)
